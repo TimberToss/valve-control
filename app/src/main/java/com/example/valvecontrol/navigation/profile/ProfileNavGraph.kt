@@ -5,7 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.valvecontrol.navigation.PROFILE_ROUTE
-import com.example.valvecontrol.ui.profile.account.SupportScreen
+import com.example.valvecontrol.ui.profile.support.SupportScreen
 import com.example.valvecontrol.ui.profile.main.ProfileScreen
 import com.example.valvecontrol.ui.profile.theme.ThemeScreen
 

@@ -2,7 +2,7 @@ package com.example.valvecontrol.ui.auth.signup
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import com.example.valvecontrol.ui.profile.theme.ThemeViewModel
+import com.example.valvecontrol.ui.auth.signup.viewmodel.SignUpViewModel
 import org.koin.androidx.compose.getViewModel
 
 

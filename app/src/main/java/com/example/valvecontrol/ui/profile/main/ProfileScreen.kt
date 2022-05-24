@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import com.example.valvecontrol.navigation.profile.ProfileItem
+import com.example.valvecontrol.ui.profile.main.viewmodel.ProfileViewModel
 import org.koin.androidx.compose.getViewModel
 
 @Composable
