@@ -1,4 +1,4 @@
-package com.example.valvecontrol.navigation
+package com.example.valvecontrol.navigation.bluetooth
 
 sealed class BluetoothItem(
     val screenRoute: String

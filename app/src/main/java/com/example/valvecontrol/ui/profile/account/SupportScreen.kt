@@ -1,6 +1,5 @@
 package com.example.valvecontrol.ui.profile.account
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,16 +9,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import com.example.valvecontrol.navigation.BottomNavItem
-import com.example.valvecontrol.ui.MY_TAG
+import com.example.valvecontrol.ui.setlisting.editvalve.EditValveViewModel
+import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun AccountScreen(navController: NavHostController) {
-    navController.graph.findNode(BottomNavItem.Bluetooth.screenRoute)?.let {
-        Log.d(MY_TAG," AccountScreen graph.findNode $it}")
-    }
+fun SupportScreen(
+    navController: NavHostController,
+    viewModel: SupportViewModel = getViewModel()
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -29,7 +27,7 @@ fun AccountScreen(navController: NavHostController) {
             modifier = Modifier.align(Alignment.Center),
             onClick = navController::popBackStack
         ) {
-            Text(text = "Account")
+            Text(text = "Support")
         }
     }
 }

@@ -40,6 +40,15 @@ class MainActivity : ComponentActivity() {
         Manifest.permission.ACCESS_FINE_LOCATION
     )
 
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private val permissionsApi29 = listOf(
+        Manifest.permission.BLUETOOTH,
+        Manifest.permission.BLUETOOTH_ADMIN,
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_BACKGROUND_LOCATION
+    )
+
     @RequiresApi(Build.VERSION_CODES.S)
     private val permissionsApi31 = listOf(
         Manifest.permission.BLUETOOTH_SCAN,
@@ -75,10 +84,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val permissions = if (isApi31()) {
-            permissionsApi31
-        } else {
-            permissionsOldApi
+        val permissions = when {
+            isApi(Build.VERSION_CODES.S) -> permissionsApi31
+            isApi(Build.VERSION_CODES.Q) -> permissionsApi29
+            else -> permissionsOldApi
         }
         checkPermissions(permissions)
         checkBLE()

@@ -1,6 +1,4 @@
-package com.example.valvecontrol.navigation
-
-import com.example.valvecontrol.R
+package com.example.valvecontrol.navigation.auth
 
 sealed class AuthItem(
     val screenRoute: String

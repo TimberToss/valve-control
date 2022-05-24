@@ -1,4 +1,4 @@
-package com.example.valvecontrol.ui.setlisting
+package com.example.valvecontrol.ui.setlisting.listing
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -11,9 +11,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.example.valvecontrol.ui.setlisting.editvalve.EditValveViewModel
+import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun ListingScreen(navController: NavHostController) {
+fun ListingScreen(
+    navController: NavHostController,
+    viewModel: ListingViewModel = getViewModel()
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()

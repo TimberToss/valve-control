@@ -1,4 +1,4 @@
-package com.example.valvecontrol.navigation
+package com.example.valvecontrol.navigation.listing
 
 sealed class ListingItem(
     val  screenRoute: String

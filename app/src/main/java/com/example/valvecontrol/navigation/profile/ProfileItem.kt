@@ -1,4 +1,4 @@
-package com.example.valvecontrol.navigation
+package com.example.valvecontrol.navigation.profile
 
 sealed class ProfileItem(
     val screenRoute: String
@@ -12,8 +12,8 @@ sealed class ProfileItem(
         "ProfileRoute"
     )
 
-    object Account : ProfileItem(
-        "AccountRoute"
+    object Support : ProfileItem(
+        "SupportRoute"
     )
 
 }

@@ -86,5 +86,5 @@ dependencies {
     implementation "com.louiscad.splitties:splitties-systemservices:3.0.0"
     implementation "com.louiscad.splitties:splitties-bitflags:3.0.0"
 
-
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1"
 }

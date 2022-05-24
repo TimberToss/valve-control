@@ -10,9 +10,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
+import com.example.valvecontrol.ui.setlisting.editvalve.EditValveViewModel
+import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun BluetoothConnectionScreen(navController: NavHostController) {
+fun BluetoothConnectionScreen(
+    navController: NavHostController,
+    viewModel: BluetoothViewModel = getViewModel()
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
