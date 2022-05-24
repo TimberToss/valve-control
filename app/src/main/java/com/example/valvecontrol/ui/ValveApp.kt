@@ -1,4 +1,4 @@
-package com.example.valvecontrol
+package com.example.valvecontrol.ui
 
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -49,10 +49,6 @@ fun ValveApp(/*foo: Foo = get()*/) {
 //            }
 //        }
     }
-}
-
-fun sendSignal() {
-
 }
 
 //private fun NavGraphBuilder.jetsnackNavGraph(

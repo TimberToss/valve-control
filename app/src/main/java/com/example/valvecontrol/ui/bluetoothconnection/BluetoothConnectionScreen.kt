@@ -10,7 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
-import com.example.valvecontrol.sendSignal
 
 @Composable
 fun BluetoothConnectionScreen(navController: NavHostController) {
@@ -21,7 +20,7 @@ fun BluetoothConnectionScreen(navController: NavHostController) {
     ) {
         Button(
             modifier = Modifier.align(Alignment.Center),
-            onClick = ::sendSignal
+            onClick = {}
         ) {
             Text(text = "BluetoothConnection")
         }

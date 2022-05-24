@@ -9,38 +9,21 @@ sealed class BottomNavItem(
     val screenRoute: String
 ) {
 
-    companion object {
-        const val ProfileRoute = "ProfileRoute"
-    }
-
     object Listing : BottomNavItem(
         "Listing",
         R.drawable.ic_baseline_apps_24,
-        "ListingRoute"
+        MAIN_ROUTE
     )
 
     object Bluetooth : BottomNavItem(
         "Bluetooth",
         R.drawable.ic_baseline_bluetooth_24,
-        "BluetoothRoute"
+        BLUETOOTH_ROUTE
     )
 
     object Profile : BottomNavItem(
         "Profile",
         R.drawable.ic_baseline_person_24,
-        ProfileRoute
+        PROFILE_ROUTE
     )
-
-    object Theme : BottomNavItem(
-        "Theme",
-        R.drawable.ic_baseline_apps_24,
-        "ThemeRoute"
-    )
-
-    object Account : BottomNavItem(
-        "Account",
-        R.drawable.ic_baseline_apps_24,
-        "AccountRoute"
-    )
-
 }

@@ -10,15 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
-import com.example.valvecontrol.navigation.BottomNavItem
-import com.example.valvecontrol.navigation.ProfileNavItem
+import com.example.valvecontrol.navigation.ProfileItem
 import com.example.valvecontrol.ui.MY_TAG
 
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreen(navController: NavHostController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -33,9 +31,9 @@ fun ProfileScreen(navController: NavController) {
     }
 }
 
-private fun openThemeScreen(navController: NavController) {
+private fun openThemeScreen(navController: NavHostController) {
     navController.currentDestination?.hierarchy?.forEach {
         Log.d(MY_TAG,"${it.route}")
     }
-    navController.navigate(BottomNavItem.Theme.screenRoute)
+    navController.navigate(ProfileItem.Theme.screenRoute)
 }

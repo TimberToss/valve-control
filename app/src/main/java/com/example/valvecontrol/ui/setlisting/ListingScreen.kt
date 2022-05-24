@@ -11,10 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import com.example.valvecontrol.sendSignal
 
 @Composable
-fun ListingScreen(navController: NavController) {
+fun ListingScreen(navController: NavHostController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -22,7 +21,7 @@ fun ListingScreen(navController: NavController) {
     ) {
         Button(
             modifier = Modifier.align(Alignment.Center),
-            onClick = ::sendSignal
+            onClick = {}
         ) {
             Text(text = "Listing")
         }

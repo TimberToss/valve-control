@@ -16,7 +16,7 @@ import com.example.valvecontrol.navigation.BottomNavItem
 import com.example.valvecontrol.ui.MY_TAG
 
 @Composable
-fun AccountScreen(navController: NavController) {
+fun AccountScreen(navController: NavHostController) {
     navController.graph.findNode(BottomNavItem.Bluetooth.screenRoute)?.let {
         Log.d(MY_TAG," AccountScreen graph.findNode $it}")
     }

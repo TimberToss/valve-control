@@ -10,16 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
-import com.example.valvecontrol.navigation.BottomNavItem
-import com.example.valvecontrol.navigation.ProfileNavItem
-import com.example.valvecontrol.sendSignal
+import com.example.valvecontrol.navigation.ProfileItem
 import com.example.valvecontrol.ui.MY_TAG
 
 @Composable
-fun ThemeScreen(navController: NavController) {
+fun ThemeScreen(navController: NavHostController) {
     navController.previousBackStackEntry?.destination?.route?.let {
         Log.d(MY_TAG," ThemeScreen previousBackStackEntry $it}")
     }
@@ -40,6 +37,6 @@ fun ThemeScreen(navController: NavController) {
     }
 }
 
-private fun openAccountScreen(navController: NavController) {
-    navController.navigate(BottomNavItem.Account.screenRoute)
+private fun openAccountScreen(navController: NavHostController) {
+    navController.navigate(ProfileItem.Account.screenRoute)
 }
