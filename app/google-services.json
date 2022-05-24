@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "290942557839",
+    "project_id": "valve-control-cd792",
+    "storage_bucket": "valve-control-cd792.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:290942557839:android:ff85ad0f52d0eb72b6dafa",
+        "android_client_info": {
+          "package_name": "com.example.valvecontrol"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "290942557839-s2r46bskgjge6a4ovg075b357v9fqffm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYBtVLWU6zWF3YW83l0xwINtDLLKcMDhg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "290942557839-s2r46bskgjge6a4ovg075b357v9fqffm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
