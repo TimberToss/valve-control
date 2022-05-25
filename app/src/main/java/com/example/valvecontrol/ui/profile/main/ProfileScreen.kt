@@ -40,7 +40,6 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun ProfileScreen(
     navController: NavHostController,
-//    viewModel: ProfileViewModel = getViewModel()
     viewModel: IProfileViewModel = getViewModel<ProfileViewModel>(),
 ) {
     val name by viewModel.name.collectAsState()
