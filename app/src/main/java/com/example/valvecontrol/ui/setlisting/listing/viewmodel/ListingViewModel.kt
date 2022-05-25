@@ -1,6 +1,7 @@
 package com.example.valvecontrol.ui.setlisting.listing.viewmodel
 
-import com.example.valvecontrol.base.BaseDualViewModel
+import com.example.valvecontrol.base.viewmodel.BaseDualViewModel
+import com.example.valvecontrol.data.model.ValveSetting
 import com.example.valvecontrol.ui.setlisting.listing.viewmodel.IListingViewModel.Event
 import com.example.valvecontrol.ui.setlisting.listing.viewmodel.IListingViewModel.PresenterEvent
 import kotlinx.coroutines.flow.MutableStateFlow

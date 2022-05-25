@@ -1,4 +1,4 @@
-package com.example.valvecontrol.base
+package com.example.valvecontrol.base.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

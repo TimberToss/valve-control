@@ -1,12 +1,18 @@
-package com.example.valvecontrol.ui
+package com.example.valvecontrol.ui.main
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.bluetooth.*
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattCharacteristic.*
+import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothGattService.SERVICE_TYPE_PRIMARY
 import android.bluetooth.BluetoothGattService.SERVICE_TYPE_SECONDARY
-import android.bluetooth.le.*
+import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanFilter
+import android.bluetooth.le.ScanResult
+import android.bluetooth.le.ScanSettings
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -17,13 +23,28 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.beepiz.blegattcoroutines.genericaccess.GenericAccess
 import com.beepiz.bluetooth.gattcoroutines.ExperimentalBleGattCoroutinesCoroutinesApi
 import com.beepiz.bluetooth.gattcoroutines.GattConnection
+import com.example.valvecontrol.ui.MY_TAG
+import com.example.valvecontrol.ui.auth.signup.viewmodel.ISignUpViewModel
+import com.example.valvecontrol.ui.isApi
+import com.example.valvecontrol.ui.main.viewmodel.IMainViewModel
+import com.example.valvecontrol.ui.main.viewmodel.IMainViewModel.Event
+import com.example.valvecontrol.ui.main.viewmodel.IMainViewModel.PresenterEvent
+import com.example.valvecontrol.ui.main.viewmodel.MainViewModel
+import com.example.valvecontrol.ui.observe
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.consumeEach
+import org.koin.android.ext.android.inject
 import splitties.bitflags.hasFlag
 import splitties.systemservices.bluetoothManager
 import java.util.*
@@ -32,6 +53,10 @@ import java.util.*
 private const val GATT_MAX_MTU_SIZE = 517
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var auth: FirebaseAuth
+
+    private val viewModel: IMainViewModel by inject<MainViewModel>()
 
     private val permissionsOldApi = listOf(
         Manifest.permission.BLUETOOTH,
@@ -83,7 +108,9 @@ class MainActivity : ComponentActivity() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(MY_TAG, "onCreate")
         super.onCreate(savedInstanceState)
+        auth = Firebase.auth
         val permissions = when {
             isApi(Build.VERSION_CODES.S) -> permissionsApi31
             isApi(Build.VERSION_CODES.Q) -> permissionsApi29
@@ -91,6 +118,7 @@ class MainActivity : ComponentActivity() {
         }
         checkPermissions(permissions)
         checkBLE()
+        observeViewModel(viewModel)
 //        lifecycleScope.launch {
 //            logNameAndAppearance()
 //        }
@@ -107,8 +135,75 @@ class MainActivity : ComponentActivity() {
 //        val mBluetoothAdapter = bluetoothManager.adapter
 //        startScan(mBluetoothAdapter)
         setContent {
-            ValveApp()
+            Log.d(MY_TAG, "setContent")
+            AppContent()
         }
+    }
+
+    @Composable
+    private fun AppContent() {
+        val userToken by viewModel.firebaseUserToken.collectAsState()
+        Log.d(MY_TAG, "userToken $userToken")
+        if (userToken != null) {
+            ValveApp()
+        } else {
+            AuthValveApp()
+        }
+    }
+
+    private fun observeViewModel(viewModel: IMainViewModel) = lifecycleScope.run {
+        observe(viewModel.presenterEvent, ::handlePresenterEvent)
+    }
+
+    private fun handlePresenterEvent(event: PresenterEvent) {
+        when (event) {
+            is PresenterEvent.SignUp -> handleSignUp(event)
+            is PresenterEvent.Login -> handleLogin(event)
+        }
+    }
+
+    private fun handleSignUp(event: PresenterEvent.SignUp) {
+        Log.d(MY_TAG, "MainActivity handleSignUp")
+        auth.createUserWithEmailAndPassword(event.email, event.password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(MY_TAG, "createUserWithEmail:success ${auth.currentUser?.email}")
+                    Toast.makeText(
+                        this, "Create user success.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    auth.currentUser?.let { viewModel.sendEvent(Event.SetUser(it)) }
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(MY_TAG, "createUserWithEmail:failure", task.exception)
+                    Toast.makeText(
+                        this, "Create user failed.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+    }
+
+    private fun handleLogin(event: PresenterEvent.Login) {
+        Log.d(MY_TAG, "MainActivity handleLogin")
+        auth.signInWithEmailAndPassword(event.email, event.password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(MY_TAG, "signInWithEmail:success")
+                    Toast.makeText(
+                        this, "Authentication success.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    auth.currentUser?.let { viewModel.sendEvent(Event.SetUser(it)) }
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(MY_TAG, "signInWithEmail:failure", task.exception)
+                    Toast.makeText(baseContext, "Authentication failed.",
+                        Toast.LENGTH_SHORT).show()
+                }
+            }
     }
 
     private val bluetoothLeScanner = bluetoothManager.adapter.bluetoothLeScanner

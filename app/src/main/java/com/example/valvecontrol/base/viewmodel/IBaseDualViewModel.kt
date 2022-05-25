@@ -1,4 +1,4 @@
-package com.example.valvecontrol.base
+package com.example.valvecontrol.base.viewmodel
 
 import kotlinx.coroutines.flow.SharedFlow
 

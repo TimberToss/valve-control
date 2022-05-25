@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.valvecontrol.navigation.START_ROUTE
 import com.example.valvecontrol.navigation.profile.ProfileItem
 import com.example.valvecontrol.theme.ValveTypography
 import com.example.valvecontrol.ui.profile.main.viewmodel.IProfileViewModel
@@ -180,7 +181,7 @@ private fun handlePresenterEvent(event: PresenterEvent, navController: NavHostCo
     }
 
 private fun openThemeScreen(navController: NavHostController) {
-    navController.navigate(ProfileItem.Theme.screenRoute)
+//    navController.navigate(ProfileItem.Theme.screenRoute)
 }
 
 private fun openSupportScreen(navController: NavHostController) {

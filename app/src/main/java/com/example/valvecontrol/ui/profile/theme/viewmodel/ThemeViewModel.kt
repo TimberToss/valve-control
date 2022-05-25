@@ -1,6 +1,6 @@
 package com.example.valvecontrol.ui.profile.theme.viewmodel
 
-import com.example.valvecontrol.base.BaseDualViewModel
+import com.example.valvecontrol.base.viewmodel.BaseDualViewModel
 import com.example.valvecontrol.ui.profile.theme.viewmodel.IThemeViewModel.Event
 import com.example.valvecontrol.ui.profile.theme.viewmodel.IThemeViewModel.PresenterEvent
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,6 +1,6 @@
 package com.example.valvecontrol.ui.bluetoothconnection.viewmodel
 
-import com.example.valvecontrol.base.BaseDualViewModel
+import com.example.valvecontrol.base.viewmodel.BaseDualViewModel
 import com.example.valvecontrol.ui.bluetoothconnection.viewmodel.IBluetoothViewModel.Event
 import com.example.valvecontrol.ui.bluetoothconnection.viewmodel.IBluetoothViewModel.PresenterEvent
 

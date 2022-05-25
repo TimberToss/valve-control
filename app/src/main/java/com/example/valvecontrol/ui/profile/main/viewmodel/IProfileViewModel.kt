@@ -1,6 +1,6 @@
 package com.example.valvecontrol.ui.profile.main.viewmodel
 
-import com.example.valvecontrol.base.IBaseDualViewModel
+import com.example.valvecontrol.base.viewmodel.IBaseDualViewModel
 import com.example.valvecontrol.ui.profile.main.viewmodel.IProfileViewModel.Event
 import com.example.valvecontrol.ui.profile.main.viewmodel.IProfileViewModel.PresenterEvent
 import kotlinx.coroutines.flow.StateFlow

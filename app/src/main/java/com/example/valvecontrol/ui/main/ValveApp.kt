@@ -1,20 +1,20 @@
-package com.example.valvecontrol.ui
+package com.example.valvecontrol.ui.main
 
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.navigation.compose.NavHost
 import com.example.valvecontrol.theme.ValveTheme
 import androidx.navigation.compose.rememberNavController
-import com.example.valvecontrol.navigation.BottomNavigation
-import com.example.valvecontrol.navigation.NavigationGraph
+import com.example.valvecontrol.navigation.*
+import com.example.valvecontrol.navigation.auth.authNavGraph
 
 @Composable
-fun ValveApp(/*foo: Foo = get()*/) {
+fun ValveApp() {
     val navController = rememberNavController()
     ValveTheme {
         Scaffold(
             bottomBar = { BottomNavigation(navController = navController) }
         ) {
-
             NavigationGraph(navController = navController)
         }
 //        val appState = rememberJetsnackAppState()
@@ -49,6 +49,8 @@ fun ValveApp(/*foo: Foo = get()*/) {
 //            }
 //        }
     }
+
+
 }
 
 //private fun NavGraphBuilder.jetsnackNavGraph(

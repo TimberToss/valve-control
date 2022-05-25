@@ -1,6 +1,7 @@
 package com.example.valvecontrol.ui.setlisting.listing.viewmodel
 
-import com.example.valvecontrol.base.IBaseDualViewModel
+import com.example.valvecontrol.base.viewmodel.IBaseDualViewModel
+import com.example.valvecontrol.data.model.ValveSetting
 import com.example.valvecontrol.ui.setlisting.listing.viewmodel.IListingViewModel.Event
 import com.example.valvecontrol.ui.setlisting.listing.viewmodel.IListingViewModel.PresenterEvent
 import kotlinx.coroutines.flow.StateFlow
@@ -20,11 +21,3 @@ interface IListingViewModel : IBaseDualViewModel<Event, PresenterEvent> {
     }
 
 }
-
-data class ValveSetting(
-    val name: String,
-    val segment1: Int,
-    val segment2: Int,
-    val segment3: Int,
-    val segment4: Int,
-)

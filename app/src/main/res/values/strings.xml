@@ -7,4 +7,7 @@
     <string name="profile_screen_change_theme">Настройка темы</string>
     <string name="profile_screen_call_support">Обратиться в поддержку</string>
     <string name="profile_screen_log_out">Выйти из аккаунта</string>
+
+    <string name="sign_up_screen_sign_up">Зарегистрироваться</string>
+    <string name="sign_up_screen_log_in">Войти</string>
 </resources>

@@ -25,6 +25,7 @@ const val MAIN_ROUTE = "MAIN_ROUTE"
 const val PROFILE_ROUTE = "PROFILE_ROUTE"
 const val BLUETOOTH_ROUTE = "BLUETOOTH_ROUTE"
 const val AUTH_ROUTE = "AUTH_ROUTE"
+const val START_ROUTE = "START_ROUTE"
 
 val bottomItems = listOf(
     BottomNavItem.Listing,
@@ -72,7 +73,7 @@ fun NavigationGraph(navController: NavHostController) {
         startDestination = MAIN_ROUTE,
         route = ROOT_ROUTE
     ) {
-        authNavGraph(navController)
+//        authNavGraph(navController)
         listingNavGraph(navController)
         bluetoothNavGraph(navController)
         profileNavGraph(navController)

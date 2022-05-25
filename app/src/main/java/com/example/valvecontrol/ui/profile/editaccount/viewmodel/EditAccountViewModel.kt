@@ -1,6 +1,6 @@
 package com.example.valvecontrol.ui.profile.editaccount.viewmodel
 
-import com.example.valvecontrol.base.BaseDualViewModel
+import com.example.valvecontrol.base.viewmodel.BaseDualViewModel
 import com.example.valvecontrol.ui.profile.editaccount.viewmodel.IEditAccountViewModel.Event
 import com.example.valvecontrol.ui.profile.editaccount.viewmodel.IEditAccountViewModel.PresenterEvent
 
