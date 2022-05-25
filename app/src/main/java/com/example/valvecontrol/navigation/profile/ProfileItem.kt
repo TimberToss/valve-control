@@ -16,4 +16,8 @@ sealed class ProfileItem(
         "SupportRoute"
     )
 
+    object EditAccountSetting : ProfileItem(
+        "EditAccountSettingRoute"
+    )
+
 }

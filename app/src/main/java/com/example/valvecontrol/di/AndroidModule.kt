@@ -4,6 +4,7 @@ import com.example.valvecontrol.ui.auth.login.viewmodel.LoginViewModel
 import com.example.valvecontrol.ui.auth.signup.viewmodel.SignUpViewModel
 import com.example.valvecontrol.ui.auth.welcome.viewmodel.WelcomeViewModel
 import com.example.valvecontrol.ui.bluetoothconnection.viewmodel.BluetoothViewModel
+import com.example.valvecontrol.ui.profile.editaccount.viewmodel.EditAccountViewModel
 import com.example.valvecontrol.ui.profile.support.viewmodel.SupportViewModel
 import com.example.valvecontrol.ui.profile.main.viewmodel.ProfileViewModel
 import com.example.valvecontrol.ui.profile.theme.viewmodel.ThemeViewModel
@@ -25,4 +26,5 @@ val androidModule = module {
     viewModel { LoginViewModel() }
     viewModel { SignUpViewModel() }
     viewModel { WelcomeViewModel() }
+    viewModel { EditAccountViewModel() }
 }

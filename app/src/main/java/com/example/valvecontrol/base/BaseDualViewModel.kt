@@ -6,4 +6,8 @@ abstract class BaseDualViewModel<Event : Any, PresenterEvent>
     : BaseViewModel<Event>(), IBaseDualViewModel<Event, PresenterEvent> {
 
     override val presenterEvent = mutableSharedFlow<PresenterEvent>()
+
+    fun sendPresenterEvent(event: PresenterEvent) {
+        presenterEvent.tryEmit(event)
+    }
 }

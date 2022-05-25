@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.valvecontrol.navigation.PROFILE_ROUTE
+import com.example.valvecontrol.ui.profile.editaccount.EditAccountScreen
 import com.example.valvecontrol.ui.profile.support.SupportScreen
 import com.example.valvecontrol.ui.profile.main.ProfileScreen
 import com.example.valvecontrol.ui.profile.theme.ThemeScreen
@@ -22,6 +23,9 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
         }
         composable(ProfileItem.Support.screenRoute) {
             SupportScreen(navController)
+        }
+        composable(ProfileItem.EditAccountSetting.screenRoute) {
+            EditAccountScreen(navController)
         }
     }
 }

@@ -42,7 +42,7 @@ fun ThemeScreen(
                 Text(text = "Update view model state")
             }
             Text(
-                text = "${number.value}",
+                text = number.value.toString(),
                 modifier = Modifier.padding(top = 10.dp)
             )
         }
