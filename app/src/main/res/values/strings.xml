@@ -10,4 +10,8 @@
 
     <string name="sign_up_screen_sign_up">Зарегистрироваться</string>
     <string name="sign_up_screen_log_in">Войти</string>
+
+    <string name="bluetooth_screen_mac_address">MAC адрес</string>
+    <string name="bluetooth_screen_connect">Подключить</string>
+    <string name="bluetooth_screen_scan">Сканировать</string>
 </resources>
