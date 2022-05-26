@@ -21,6 +21,15 @@ import com.beepiz.bluetooth.gattcoroutines.ExperimentalBleGattCoroutinesCoroutin
 import com.beepiz.bluetooth.gattcoroutines.GattConnection
 import com.example.valvecontrol.data.model.ValveSetting
 import com.example.valvecontrol.data.provider.ValveAppDataStorePrefKeys.DATA_STORE_NAME
+import com.example.valvecontrol.ui.Constants.PERMISSIONS_API_29
+import com.example.valvecontrol.ui.Constants.PERMISSIONS_API_31
+import com.example.valvecontrol.ui.Constants.PERMISSIONS_OLD_API
+import com.example.valvecontrol.ui.Constants.SETTINGS_TABLE_NAME_FIELD
+import com.example.valvecontrol.ui.Constants.SETTINGS_TABLE_SEGMENT1_FIELD
+import com.example.valvecontrol.ui.Constants.SETTINGS_TABLE_SEGMENT2_FIELD
+import com.example.valvecontrol.ui.Constants.SETTINGS_TABLE_SEGMENT3_FIELD
+import com.example.valvecontrol.ui.Constants.SETTINGS_TABLE_SEGMENT4_FIELD
+import com.example.valvecontrol.ui.Constants.USERS_TABLE_EMAIL_FIELD
 import com.example.valvecontrol.ui.main.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
@@ -39,9 +48,9 @@ const val MY_TAG = "MY_TAG"
 fun isApi(apiNumber: Int) = Build.VERSION.SDK_INT >= apiNumber
 
 fun resolveNeededPermissions() = when {
-    isApi(Build.VERSION_CODES.S) -> permissionsApi31
-    isApi(Build.VERSION_CODES.Q) -> permissionsApi29
-    else -> permissionsOldApi
+    isApi(Build.VERSION_CODES.S) -> PERMISSIONS_API_31
+    isApi(Build.VERSION_CODES.Q) -> PERMISSIONS_API_29
+    else -> PERMISSIONS_OLD_API
 }
 
 fun <T> mutableSharedFlow() =

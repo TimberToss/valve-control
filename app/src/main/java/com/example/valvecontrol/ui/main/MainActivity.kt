@@ -24,6 +24,10 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.valvecontrol.data.model.ValveSetting
 import com.example.valvecontrol.ui.*
+import com.example.valvecontrol.ui.Constants.CHARACTERISTIC_SEGMENT1_UUID
+import com.example.valvecontrol.ui.Constants.SERVICE_UUID
+import com.example.valvecontrol.ui.Constants.USERS_TABLE_NAME
+import com.example.valvecontrol.ui.Constants.USERS_TABLE_SETTINGS_COLLECTION
 import com.example.valvecontrol.ui.main.viewmodel.IMainViewModel
 import com.example.valvecontrol.ui.main.viewmodel.IMainViewModel.Event
 import com.example.valvecontrol.ui.main.viewmodel.IMainViewModel.PresenterEvent
@@ -41,58 +45,19 @@ import java.io.UnsupportedEncodingException
 import java.util.*
 
 
-private const val GATT_MAX_MTU_SIZE = 517
-const val USERS_TABLE_NAME = "users"
-const val USERS_TABLE_EMAIL_FIELD = "email"
-const val USERS_TABLE_SETTINGS_COLLECTION = "valveSettings"
-const val SETTINGS_TABLE_NAME_FIELD = "name"
-const val SETTINGS_TABLE_SEGMENT1_FIELD = "segment1"
-const val SETTINGS_TABLE_SEGMENT2_FIELD = "segment2"
-const val SETTINGS_TABLE_SEGMENT3_FIELD = "segment3"
-const val SETTINGS_TABLE_SEGMENT4_FIELD = "segment4"
-
-val SERVICE_UUID = UUID.fromString("e4205d54-dd14-11ec-9d64-0242ac120002")
-val CHARACTERISTIC_SEGMENT_UUID = UUID.fromString("f0dd21f8-dd14-11ec-9d64-0242ac120002")
-
-val permissionsOldApi = listOf(
-    Manifest.permission.BLUETOOTH,
-    Manifest.permission.BLUETOOTH_ADMIN,
-    Manifest.permission.ACCESS_COARSE_LOCATION,
-    Manifest.permission.ACCESS_FINE_LOCATION
-)
-
-@RequiresApi(Build.VERSION_CODES.Q)
-val permissionsApi29 = listOf(
-    Manifest.permission.BLUETOOTH,
-    Manifest.permission.BLUETOOTH_ADMIN,
-    Manifest.permission.ACCESS_COARSE_LOCATION,
-    Manifest.permission.ACCESS_FINE_LOCATION,
-    Manifest.permission.ACCESS_BACKGROUND_LOCATION
-)
-
-@RequiresApi(Build.VERSION_CODES.S)
-val permissionsApi31 = listOf(
-    Manifest.permission.BLUETOOTH_SCAN,
-    Manifest.permission.BLUETOOTH_ADVERTISE,
-    Manifest.permission.BLUETOOTH_CONNECT,
-    Manifest.permission.ACCESS_COARSE_LOCATION,
-    Manifest.permission.ACCESS_FINE_LOCATION,
-    Manifest.permission.ACCESS_BACKGROUND_LOCATION
-)
-
-
 class MainActivity : ComponentActivity() {
+
+    companion object {
+        private const val SCAN_PERIOD: Long = 10_000
+    }
 
     private lateinit var auth: FirebaseAuth
     private lateinit var database: FirebaseFirestore
+    private lateinit var gatt: BluetoothGatt
+    private lateinit var bluetoothLeAdvertiser: BluetoothLeAdvertiser
 
     private var isScan = false
     private var segmentInitialized = false
-    private lateinit var gatt: BluetoothGatt
-
-    //    private lateinit var bluetoothManager: BluetoothManager
-//    private lateinit var bluetoothAdapter: BluetoothAdapter
-    private lateinit var bluetoothLeAdvertiser: BluetoothLeAdvertiser
 
     private var scanning = false
     private val handler = Handler()
@@ -103,8 +68,6 @@ class MainActivity : ComponentActivity() {
     private var mHandler = Handler()
     private var mScanResults = mutableMapOf<String, BluetoothDevice>()
     private var mScanCallback = BtleScanCallback(mScanResults)
-
-    private val SCAN_PERIOD: Long = 10_000
 
     private val viewModel: IMainViewModel by inject<MainViewModel>()
 
@@ -140,7 +103,7 @@ class MainActivity : ComponentActivity() {
             }
             Log.d(MY_TAG, "onServicesDiscovered == BluetoothGatt.GATT_SUCCESS")
             val service = gatt!!.getService(SERVICE_UUID)
-            val characteristic = service.getCharacteristic(CHARACTERISTIC_SEGMENT_UUID)
+            val characteristic = service.getCharacteristic(CHARACTERISTIC_SEGMENT1_UUID)
             characteristic.writeType = WRITE_TYPE_DEFAULT
             segmentInitialized = gatt.setCharacteristicNotification(characteristic, true)
             sendMessage()
@@ -291,7 +254,7 @@ class MainActivity : ComponentActivity() {
             return
         }
         val service = gatt.getService(SERVICE_UUID)
-        val characteristic = service.getCharacteristic(CHARACTERISTIC_SEGMENT_UUID)
+        val characteristic = service.getCharacteristic(CHARACTERISTIC_SEGMENT1_UUID)
         val message = "Hello"
         var messageBytes = ByteArray(0)
         try {
