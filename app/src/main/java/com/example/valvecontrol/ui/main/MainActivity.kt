@@ -6,7 +6,6 @@ import android.bluetooth.*
 import android.bluetooth.BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
 import android.bluetooth.le.*
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.ParcelUuid
@@ -15,7 +14,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,6 +23,9 @@ import androidx.lifecycle.lifecycleScope
 import com.example.valvecontrol.data.model.ValveSetting
 import com.example.valvecontrol.ui.*
 import com.example.valvecontrol.ui.Constants.CHARACTERISTIC_SEGMENT1_UUID
+import com.example.valvecontrol.ui.Constants.CHARACTERISTIC_SEGMENT2_UUID
+import com.example.valvecontrol.ui.Constants.CHARACTERISTIC_SEGMENT3_UUID
+import com.example.valvecontrol.ui.Constants.CHARACTERISTIC_SEGMENT4_UUID
 import com.example.valvecontrol.ui.Constants.SERVICE_UUID
 import com.example.valvecontrol.ui.Constants.USERS_TABLE_NAME
 import com.example.valvecontrol.ui.Constants.USERS_TABLE_SETTINGS_COLLECTION
@@ -103,10 +104,18 @@ class MainActivity : ComponentActivity() {
             }
             Log.d(MY_TAG, "onServicesDiscovered == BluetoothGatt.GATT_SUCCESS")
             val service = gatt!!.getService(SERVICE_UUID)
-            val characteristic = service.getCharacteristic(CHARACTERISTIC_SEGMENT1_UUID)
-            characteristic.writeType = WRITE_TYPE_DEFAULT
-            segmentInitialized = gatt.setCharacteristicNotification(characteristic, true)
-            sendMessage()
+            val characteristicSegment1 = service.getCharacteristic(CHARACTERISTIC_SEGMENT1_UUID)
+            val characteristicSegment2 = service.getCharacteristic(CHARACTERISTIC_SEGMENT2_UUID)
+            val characteristicSegment3 = service.getCharacteristic(CHARACTERISTIC_SEGMENT3_UUID)
+            val characteristicSegment4 = service.getCharacteristic(CHARACTERISTIC_SEGMENT4_UUID)
+            characteristicSegment1.writeType = WRITE_TYPE_DEFAULT
+            characteristicSegment2.writeType = WRITE_TYPE_DEFAULT
+            characteristicSegment3.writeType = WRITE_TYPE_DEFAULT
+            characteristicSegment4.writeType = WRITE_TYPE_DEFAULT
+            segmentInitialized = gatt.setCharacteristicNotification(characteristicSegment1, true)
+                    && gatt.setCharacteristicNotification(characteristicSegment2, true)
+                    && gatt.setCharacteristicNotification(characteristicSegment3, true)
+                    && gatt.setCharacteristicNotification(characteristicSegment4, true)
         }
 
         override fun onCharacteristicWrite(
@@ -115,7 +124,16 @@ class MainActivity : ComponentActivity() {
             status: Int
         ) {
             super.onCharacteristicWrite(gatt, characteristic, status)
-            Log.d(MY_TAG, "onCharacteristicWrite status $status")
+            Log.d(MY_TAG, "onCharacteristicWrite value ${characteristic?.value} status $status")
+        }
+
+        override fun onCharacteristicRead(
+            gatt: BluetoothGatt?,
+            characteristic: BluetoothGattCharacteristic?,
+            status: Int
+        ) {
+            super.onCharacteristicRead(gatt, characteristic, status)
+            Log.d(MY_TAG, "onCharacteristicRead value ${characteristic?.value} status $status")
         }
 
         override fun onCharacteristicChanged(
@@ -248,23 +266,30 @@ class MainActivity : ComponentActivity() {
     }
 
     @RequiresPermission(value = "android.permission.BLUETOOTH_CONNECT")
-    private fun sendMessage() {
+    private fun applyValveSetting(valveSetting: ValveSetting) {
         Log.d(MY_TAG, "sendMessage connected $connected segmentInitialized $segmentInitialized")
         if (!connected || !segmentInitialized) {
             return
         }
         val service = gatt.getService(SERVICE_UUID)
-        val characteristic = service.getCharacteristic(CHARACTERISTIC_SEGMENT1_UUID)
-        val message = "Hello"
+//        val message = "Hello"
+        valveSetting.toCharacteristics().forEach { (uuid, value) ->
+            service.writeCharacteristic(uuid, value.toString())
+        }
+    }
+
+    @RequiresPermission(value = "android.permission.BLUETOOTH_CONNECT")
+    private fun BluetoothGattService.writeCharacteristic(uuid: UUID, value: String) {
+        val characteristic = getCharacteristic(uuid)
         var messageBytes = ByteArray(0)
         try {
-            messageBytes = message.toByteArray(charset("UTF-8"))
+            messageBytes = value.toByteArray(charset("UTF-8"))
         } catch (e: UnsupportedEncodingException) {
-            Log.e(MY_TAG, "Failed to convert message string to byte array", e)
+            Log.e(MY_TAG, "Failed to convert string value $value uuid $uuid to byte array", e)
         }
         characteristic.value = messageBytes
         val success = gatt.writeCharacteristic(characteristic)
-        Log.d(MY_TAG, "writeCharacteristic success $success")
+        Log.d(MY_TAG, "writeCharacteristic uuid $uuid success $success")
     }
 
     private fun observeViewModel(viewModel: IMainViewModel) = lifecycleScope.run {
@@ -280,6 +305,7 @@ class MainActivity : ComponentActivity() {
             is PresenterEvent.GetValveSettings -> handleGetSettings()
             is PresenterEvent.StartScan -> startScan()
             is PresenterEvent.ConnectDevice -> connectDevice(event.device)
+            is PresenterEvent.ApplyValveSetting -> applyValveSetting(event.valveSetting)
         }
     }
 

@@ -37,7 +37,7 @@ val bottomItems = listOf(
 fun BottomNavigation(navController: NavHostController) {
 
     androidx.compose.material.BottomNavigation(
-        backgroundColor = colorResource(id = R.color.teal_200),
+//        backgroundColor = colorResource(id = R.color.teal_200),
         contentColor = Color.Black
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -48,7 +48,7 @@ fun BottomNavigation(navController: NavHostController) {
                 label = { Text(text = item.title, fontSize = 9.sp) },
                 selectedContentColor = Color.Black,
                 unselectedContentColor = Color.Black.copy(0.4f),
-                alwaysShowLabel = true,
+                alwaysShowLabel = false,
                 selected = currentDestination?.hierarchy?.any {
                     it.route == item.screenRoute
                 } == true,

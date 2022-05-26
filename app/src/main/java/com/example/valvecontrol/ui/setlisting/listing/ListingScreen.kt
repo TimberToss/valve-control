@@ -7,6 +7,7 @@ import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -16,8 +17,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.valvecontrol.R
 import com.example.valvecontrol.data.model.ValveSetting
 import com.example.valvecontrol.navigation.listing.ListingItem
 import com.example.valvecontrol.theme.ValveTypography
@@ -52,8 +55,7 @@ fun ListingScreen(
             SettingItem(
                 setting = setting,
                 onClick = {
-//                    mainViewModel.sendEvent(IMainViewModel.Event.AddValveSetting(it))
-                /*viewModel.sendEvent(Event.ApplyValveSetting(it))*/
+                    mainViewModel.sendEvent(IMainViewModel.Event.ApplyValveSetting(it))
                 }
             )
         }
@@ -87,12 +89,12 @@ private fun SettingItem(
                 style = ValveTypography.h2,
                 modifier = Modifier
                     .weight(1.0f)
-                    .padding(start = 12.dp, end = 12.dp, bottom = 2.dp)
+                    .padding(start = 12.dp, end = 12.dp)
             )
         }
         Row(
             verticalAlignment = Alignment.Bottom,
-            modifier = Modifier.padding(bottom = 12.dp)
+            modifier = Modifier.padding(top = 4.dp)
         ) {
             Text(
                 text = setting.segment1.toString(),
@@ -121,6 +123,17 @@ private fun SettingItem(
                 modifier = Modifier
                     .weight(1.0f)
                     .padding(start = 12.dp, end = 12.dp, bottom = 2.dp)
+            )
+        }
+        Button(
+            onClick = { onClick(setting) },
+            modifier = Modifier
+                .align(Alignment.End)
+                .padding(start = 12.dp, end = 12.dp)
+        ) {
+            Text(
+                text = stringResource(id = R.string.bluetooth_screen_connect),
+                style = ValveTypography.body1,
             )
         }
     }

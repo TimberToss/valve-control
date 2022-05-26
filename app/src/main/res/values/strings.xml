@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">ValveControl</string>
-    <string name="listing_screen_title">Listing</string>
+    <string name="listing_screen_title">Режимы</string>
     <string name="bluetooth_screen_title">Bluetooth</string>
-    <string name="profile_screen_title">Profile</string>
+    <string name="profile_screen_title">Профиль</string>
 
     <string name="profile_screen_change_theme">Настройка темы</string>
     <string name="profile_screen_call_support">Обратиться в поддержку</string>
@@ -14,4 +14,6 @@
     <string name="bluetooth_screen_mac_address">MAC адрес</string>
     <string name="bluetooth_screen_connect">Подключить</string>
     <string name="bluetooth_screen_scan">Сканировать</string>
+
+    <string name="listing_screen_apply">Применить</string>
 </resources>

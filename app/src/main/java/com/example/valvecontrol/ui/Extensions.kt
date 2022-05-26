@@ -21,6 +21,10 @@ import com.beepiz.bluetooth.gattcoroutines.ExperimentalBleGattCoroutinesCoroutin
 import com.beepiz.bluetooth.gattcoroutines.GattConnection
 import com.example.valvecontrol.data.model.ValveSetting
 import com.example.valvecontrol.data.provider.ValveAppDataStorePrefKeys.DATA_STORE_NAME
+import com.example.valvecontrol.ui.Constants.CHARACTERISTIC_SEGMENT1_UUID
+import com.example.valvecontrol.ui.Constants.CHARACTERISTIC_SEGMENT2_UUID
+import com.example.valvecontrol.ui.Constants.CHARACTERISTIC_SEGMENT3_UUID
+import com.example.valvecontrol.ui.Constants.CHARACTERISTIC_SEGMENT4_UUID
 import com.example.valvecontrol.ui.Constants.PERMISSIONS_API_29
 import com.example.valvecontrol.ui.Constants.PERMISSIONS_API_31
 import com.example.valvecontrol.ui.Constants.PERMISSIONS_OLD_API
@@ -30,6 +34,7 @@ import com.example.valvecontrol.ui.Constants.SETTINGS_TABLE_SEGMENT2_FIELD
 import com.example.valvecontrol.ui.Constants.SETTINGS_TABLE_SEGMENT3_FIELD
 import com.example.valvecontrol.ui.Constants.SETTINGS_TABLE_SEGMENT4_FIELD
 import com.example.valvecontrol.ui.Constants.USERS_TABLE_EMAIL_FIELD
+import com.example.valvecontrol.ui.Constants.allCharacteristics
 import com.example.valvecontrol.ui.main.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
@@ -174,6 +179,18 @@ suspend fun logNameAndAppearance(deviceMacAddress: String = defaultDeviceMacAddr
 
 fun deviceFor(macAddress: String): BluetoothDevice =
     bluetoothManager.adapter.getRemoteDevice(macAddress)
+
+fun ValveSetting.toCharacteristics() = allCharacteristics.map {
+    when (it) {
+        CHARACTERISTIC_SEGMENT1_UUID -> it to segment1
+        CHARACTERISTIC_SEGMENT2_UUID -> it to segment2
+        CHARACTERISTIC_SEGMENT3_UUID -> it to segment3
+        CHARACTERISTIC_SEGMENT4_UUID -> it to segment4
+        else -> {
+            throw IllegalStateException("Must add handler case for uuid $it")
+        }
+    }
+}
 
 @OptIn(ExperimentalBleGattCoroutinesCoroutinesApi::class)
 @SuppressLint("MissingPermission")
