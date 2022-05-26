@@ -42,6 +42,7 @@ class MainViewModel(
             is Event.GetValveSettings -> sendPresenterEvent(PresenterEvent.GetValveSettings)
             is Event.UpdateValveSettings -> handleUpdateValveSettings(event)
             is Event.SetBluetoothDevices -> longRunning { handleSetBluetoothDevices(event) }
+            is Event.ConnectDevice -> sendPresenterEvent(PresenterEvent.ConnectDevice(event.device))
             is Event.AddValveSetting ->
                 sendPresenterEvent(PresenterEvent.AddValveSetting(event.setting))
         }

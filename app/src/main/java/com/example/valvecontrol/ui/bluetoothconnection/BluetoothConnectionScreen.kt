@@ -57,7 +57,8 @@ fun BluetoothConnectionScreen(
         ) {
             bluetoothDevices.forEach { device ->
                 BluetoothDeviceItem(device) {
-                    viewModel.sendEvent(Event.ConnectDevice(it))
+                    mainViewModel.sendEvent(IMainViewModel.Event.ConnectDevice(it))
+//                    viewModel.sendEvent(Event.ConnectDevice(it))
                 }
             }
         }

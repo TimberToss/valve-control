@@ -3,7 +3,7 @@ package com.example.valvecontrol.ui.main
 import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.*
-import android.bluetooth.BluetoothGattCharacteristic.*
+import android.bluetooth.BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
 import android.bluetooth.le.*
 import android.content.pm.PackageManager
 import android.os.Build
@@ -34,9 +34,10 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.*
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import splitties.systemservices.bluetoothManager
+import java.io.UnsupportedEncodingException
 import java.util.*
 
 
@@ -98,6 +99,7 @@ class MainActivity : ComponentActivity() {
     private val bluetoothLeScanner = bluetoothManager.adapter.bluetoothLeScanner
 
     private var isScanning = false
+    private var connected = false
     private var mHandler = Handler()
     private var mScanResults = mutableMapOf<String, BluetoothDevice>()
     private var mScanCallback = BtleScanCallback(mScanResults)
@@ -122,7 +124,7 @@ class MainActivity : ComponentActivity() {
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 Log.d(MY_TAG, "onConnectionStateChange STATE_CONNECTED")
                 gatt.discoverServices()
-                isScan = true
+                connected = true
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.d(MY_TAG, "onConnectionStateChange STATE_DISCONNECTED")
                 disconnectGattServer()
@@ -141,6 +143,31 @@ class MainActivity : ComponentActivity() {
             val characteristic = service.getCharacteristic(CHARACTERISTIC_SEGMENT_UUID)
             characteristic.writeType = WRITE_TYPE_DEFAULT
             segmentInitialized = gatt.setCharacteristicNotification(characteristic, true)
+            sendMessage()
+        }
+
+        override fun onCharacteristicWrite(
+            gatt: BluetoothGatt?,
+            characteristic: BluetoothGattCharacteristic?,
+            status: Int
+        ) {
+            super.onCharacteristicWrite(gatt, characteristic, status)
+            Log.d(MY_TAG, "onCharacteristicWrite status $status")
+        }
+
+        override fun onCharacteristicChanged(
+            gatt: BluetoothGatt?,
+            characteristic: BluetoothGattCharacteristic?
+        ) {
+            super.onCharacteristicChanged(gatt, characteristic)
+            val messageBytes = characteristic!!.value
+            var messageString: String? = null
+            try {
+                messageString = String(messageBytes, Charsets.UTF_8)
+            } catch (e: UnsupportedEncodingException) {
+                Log.e(MY_TAG, "Unable to convert message bytes to string")
+            }
+            Log.d(MY_TAG, "Received message: $messageString")
         }
     }
 
@@ -257,11 +284,31 @@ class MainActivity : ComponentActivity() {
         isScan = false
     }
 
+    @RequiresPermission(value = "android.permission.BLUETOOTH_CONNECT")
+    private fun sendMessage() {
+        Log.d(MY_TAG, "sendMessage connected $connected segmentInitialized $segmentInitialized")
+        if (!connected || !segmentInitialized) {
+            return
+        }
+        val service = gatt.getService(SERVICE_UUID)
+        val characteristic = service.getCharacteristic(CHARACTERISTIC_SEGMENT_UUID)
+        val message = "Hello"
+        var messageBytes = ByteArray(0)
+        try {
+            messageBytes = message.toByteArray(charset("UTF-8"))
+        } catch (e: UnsupportedEncodingException) {
+            Log.e(MY_TAG, "Failed to convert message string to byte array", e)
+        }
+        characteristic.value = messageBytes
+        val success = gatt.writeCharacteristic(characteristic)
+        Log.d(MY_TAG, "writeCharacteristic success $success")
+    }
 
     private fun observeViewModel(viewModel: IMainViewModel) = lifecycleScope.run {
         observe(viewModel.presenterEvent, ::handlePresenterEvent)
     }
 
+    @SuppressLint("MissingPermission")
     private fun handlePresenterEvent(event: PresenterEvent) {
         when (event) {
             is PresenterEvent.SignUp -> handleSignUp(event)
@@ -269,6 +316,7 @@ class MainActivity : ComponentActivity() {
             is PresenterEvent.AddValveSetting -> handleAddValveSetting(event.valveSetting)
             is PresenterEvent.GetValveSettings -> handleGetSettings()
             is PresenterEvent.StartScan -> startScan()
+            is PresenterEvent.ConnectDevice -> connectDevice(event.device)
         }
     }
 

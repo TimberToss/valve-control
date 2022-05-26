@@ -3,6 +3,7 @@ package com.example.valvecontrol.ui.main.viewmodel
 import android.bluetooth.BluetoothDevice
 import com.example.valvecontrol.base.viewmodel.IBaseDualViewModel
 import com.example.valvecontrol.data.model.ValveSetting
+import com.example.valvecontrol.ui.bluetoothconnection.viewmodel.IBluetoothViewModel
 import com.example.valvecontrol.ui.main.viewmodel.IMainViewModel.Event
 import com.example.valvecontrol.ui.main.viewmodel.IMainViewModel.PresenterEvent
 import com.google.firebase.auth.FirebaseUser
@@ -24,6 +25,7 @@ interface IMainViewModel : IBaseDualViewModel<Event, PresenterEvent> {
         data class AddValveSetting(val setting: ValveSetting) : Event()
         data class UpdateValveSettings(val settings: List<ValveSetting>) : Event()
         data class SetBluetoothDevices(val devices: List<BluetoothDevice>) : Event()
+        data class ConnectDevice(val device: BluetoothDevice) : Event()
         object SubscribeUser : Event()
         object GetValveSettings : Event()
         object StartScan : Event()
@@ -35,6 +37,7 @@ interface IMainViewModel : IBaseDualViewModel<Event, PresenterEvent> {
         data class AddValveSetting(val valveSetting: ValveSetting) : PresenterEvent()
         object GetValveSettings : PresenterEvent()
         object StartScan : PresenterEvent()
+        data class ConnectDevice(val device: BluetoothDevice) : PresenterEvent()
     }
 
 }
