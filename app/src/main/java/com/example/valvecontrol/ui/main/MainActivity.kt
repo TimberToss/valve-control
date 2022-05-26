@@ -31,16 +31,17 @@ import androidx.lifecycle.lifecycleScope
 import com.beepiz.blegattcoroutines.genericaccess.GenericAccess
 import com.beepiz.bluetooth.gattcoroutines.ExperimentalBleGattCoroutinesCoroutinesApi
 import com.beepiz.bluetooth.gattcoroutines.GattConnection
-import com.example.valvecontrol.ui.MY_TAG
-import com.example.valvecontrol.ui.auth.signup.viewmodel.ISignUpViewModel
-import com.example.valvecontrol.ui.isApi
+import com.example.valvecontrol.data.model.ValveSetting
+import com.example.valvecontrol.ui.*
 import com.example.valvecontrol.ui.main.viewmodel.IMainViewModel
 import com.example.valvecontrol.ui.main.viewmodel.IMainViewModel.Event
 import com.example.valvecontrol.ui.main.viewmodel.IMainViewModel.PresenterEvent
 import com.example.valvecontrol.ui.main.viewmodel.MainViewModel
-import com.example.valvecontrol.ui.observe
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.consumeEach
@@ -51,10 +52,19 @@ import java.util.*
 
 
 private const val GATT_MAX_MTU_SIZE = 517
+const val USERS_TABLE_NAME = "users"
+const val USERS_TABLE_EMAIL_FIELD = "email"
+const val USERS_TABLE_SETTINGS_COLLECTION = "valveSettings"
+const val SETTINGS_TABLE_NAME_FIELD = "name"
+const val SETTINGS_TABLE_SEGMENT1_FIELD = "segment1"
+const val SETTINGS_TABLE_SEGMENT2_FIELD = "segment2"
+const val SETTINGS_TABLE_SEGMENT3_FIELD = "segment3"
+const val SETTINGS_TABLE_SEGMENT4_FIELD = "segment4"
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var auth: FirebaseAuth
+    private lateinit var database: FirebaseFirestore
 
     private val viewModel: IMainViewModel by inject<MainViewModel>()
 
@@ -111,6 +121,8 @@ class MainActivity : ComponentActivity() {
         Log.d(MY_TAG, "onCreate")
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
+        database = Firebase.firestore
+        observeViewModel(viewModel)
         val permissions = when {
             isApi(Build.VERSION_CODES.S) -> permissionsApi31
             isApi(Build.VERSION_CODES.Q) -> permissionsApi29
@@ -118,7 +130,6 @@ class MainActivity : ComponentActivity() {
         }
         checkPermissions(permissions)
         checkBLE()
-        observeViewModel(viewModel)
 //        lifecycleScope.launch {
 //            logNameAndAppearance()
 //        }
@@ -134,6 +145,7 @@ class MainActivity : ComponentActivity() {
 //        val bluetoothManager = getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
 //        val mBluetoothAdapter = bluetoothManager.adapter
 //        startScan(mBluetoothAdapter)
+        viewModel.sendEvent(Event.GetValveSettings)
         setContent {
             Log.d(MY_TAG, "setContent")
             AppContent()
@@ -159,6 +171,8 @@ class MainActivity : ComponentActivity() {
         when (event) {
             is PresenterEvent.SignUp -> handleSignUp(event)
             is PresenterEvent.Login -> handleLogin(event)
+            is PresenterEvent.AddValveSetting -> handleAddValveSetting(event.valveSetting)
+            is PresenterEvent.GetValveSettings -> handleGetSettings()
         }
     }
 
@@ -173,7 +187,10 @@ class MainActivity : ComponentActivity() {
                         this, "Create user success.",
                         Toast.LENGTH_SHORT
                     ).show()
-                    auth.currentUser?.let { viewModel.sendEvent(Event.SetUser(it)) }
+                    auth.currentUser?.let {
+                        createFirestoreDocument(it)
+                        viewModel.sendEvent(Event.SetUser(it))
+                    }
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(MY_TAG, "createUserWithEmail:failure", task.exception)
@@ -191,7 +208,7 @@ class MainActivity : ComponentActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    Log.d(MY_TAG, "signInWithEmail:success")
+                    Log.d(MY_TAG, "signInWithEmail:success ${auth.currentUser?.uid}")
                     Toast.makeText(
                         this, "Authentication success.",
                         Toast.LENGTH_SHORT
@@ -203,6 +220,55 @@ class MainActivity : ComponentActivity() {
                     Toast.makeText(baseContext, "Authentication failed.",
                         Toast.LENGTH_SHORT).show()
                 }
+            }
+    }
+
+    private fun createFirestoreDocument(firebaseUser: FirebaseUser) {
+        database.collection(USERS_TABLE_NAME)
+            .document(firebaseUser.uid)
+            .set(firebaseUser.createUserForDocument())
+            .addOnSuccessListener { Log.d(MY_TAG, "DocumentSnapshot successfully written!") }
+            .addOnFailureListener { e ->
+                Log.w(MY_TAG, "Error adding document", e)
+            }
+    }
+
+    private fun handleAddValveSetting(setting: ValveSetting) {
+        val user = Firebase.auth.currentUser ?: return
+        database.collection(USERS_TABLE_NAME)
+            .document(user.uid)
+            .collection(USERS_TABLE_SETTINGS_COLLECTION)
+            .add(setting.toFirestoreSetting())
+            .addOnSuccessListener { documentReference ->
+                Log.d(MY_TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w(MY_TAG, "Error adding document", e)
+            }
+    }
+
+    private fun handleGetSettings() {
+        Log.d(MY_TAG, "handleGetSettings user ${Firebase.auth.currentUser}")
+        val user = Firebase.auth.currentUser ?: return
+        Log.d(MY_TAG, "handleGetSettings")
+        database.collection(USERS_TABLE_NAME)
+            .document(user.uid)
+            .collection(USERS_TABLE_SETTINGS_COLLECTION)
+            .get()
+            .addOnSuccessListener { result ->
+                try {
+                    val settings = result.documents.mapNotNull { it.data?.toValveSetting() }
+                    viewModel.sendEvent(Event.UpdateValveSettings(settings))
+                } catch (e: Exception) {
+                    Log.e(MY_TAG, "Error when transform firestore data to ValveSetting", e)
+                }
+                for (document in result) {
+                    Log.d(MY_TAG, "${document.id} => ${document.data}")
+                    document.data
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w(MY_TAG, "Error getting documents.", exception)
             }
     }
 

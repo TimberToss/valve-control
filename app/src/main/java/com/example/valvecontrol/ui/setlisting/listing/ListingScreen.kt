@@ -21,8 +21,9 @@ import androidx.navigation.NavHostController
 import com.example.valvecontrol.data.model.ValveSetting
 import com.example.valvecontrol.navigation.listing.ListingItem
 import com.example.valvecontrol.theme.ValveTypography
+import com.example.valvecontrol.ui.main.viewmodel.IMainViewModel
+import com.example.valvecontrol.ui.main.viewmodel.MainViewModel
 import com.example.valvecontrol.ui.setlisting.listing.viewmodel.IListingViewModel
-import com.example.valvecontrol.ui.setlisting.listing.viewmodel.IListingViewModel.Event
 import com.example.valvecontrol.ui.setlisting.listing.viewmodel.IListingViewModel.PresenterEvent
 import com.example.valvecontrol.ui.setlisting.listing.viewmodel.ListingViewModel
 import org.koin.androidx.compose.getViewModel
@@ -30,9 +31,10 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun ListingScreen(
     navController: NavHostController,
-    viewModel: IListingViewModel = getViewModel<ListingViewModel>()
+    viewModel: IListingViewModel = getViewModel<ListingViewModel>(),
+    mainViewModel: IMainViewModel = getViewModel<MainViewModel>()
 ) {
-    val settings by viewModel.settings.collectAsState()
+    val settings by mainViewModel.settings.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.presenterEvent.collect {
@@ -49,7 +51,10 @@ fun ListingScreen(
         settings.forEach { setting ->
             SettingItem(
                 setting = setting,
-                onClick = { viewModel.sendEvent(Event.ApplyValveSetting(it)) }
+                onClick = {
+//                    mainViewModel.sendEvent(IMainViewModel.Event.AddValveSetting(it))
+                /*viewModel.sendEvent(Event.ApplyValveSetting(it))*/
+                }
             )
         }
     }
